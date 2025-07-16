@@ -186,3 +186,71 @@ FROM grouped_tasks
 GROUP BY group_key
 ORDER BY DATEDIFF(MAX(End_Date), MIN(Start_Date)) ASC, MIN(Start_Date);
 ```
+
+## 7 - Top Competitors
+
+Julia just finished conducting a coding contest, and she needs your help assembling the leaderboard! Write a query to print the respective hacker_id and name of hackers who achieved full scores for more than one challenge. Order your output in descending order by the total number of challenges in which the hacker earned a full score. If more than one hacker received full scores in same number of challenges, then sort them by ascending hacker_id.
+
+Input Format
+
+The following tables contain contest data:
+
+Hackers: The hacker_id is the id of the hacker, and name is the name of the hacker.
+
+![image](https://i.postimg.cc/mg4MJVns/imagem-2025-07-16-194902666.png)
+
+Difficulty: The difficult_level is the level of difficulty of the challenge, and score is the maximum score that can be achieved for a challenge at that difficulty level.
+
+![image](https://i.postimg.cc/Pq3wLH5X/imagem-2025-07-16-194943546.png)
+
+Challenges: The challenge_id is the id of the challenge, the hacker_id is the id of the hacker who created the challenge, and difficulty_level is the level of difficulty of the challenge.
+
+![image](https://i.postimg.cc/wMJybscM/imagem-2025-07-16-195029905.png)
+
+Submissions: The submission_id is the id of the submission, hacker_id is the id of the hacker who made the submission, challenge_id is the id of the challenge that the submission belongs to, and score is the score of the submission.
+
+![image](https://i.postimg.cc/Bv68fzcd/imagem-2025-07-16-195112241.png)
+
+Sample Input
+
+Hackers Table:
+
+![image](https://i.postimg.cc/bJSss25g/imagem-2025-07-16-195149043.png)
+
+Difficulty Table:
+
+![image](https://i.postimg.cc/prNy8LbH/imagem-2025-07-16-195230903.png)
+
+Challenges Table:
+
+![image](https://i.postimg.cc/pL0TCZbk/imagem-2025-07-16-195423062.png)
+
+Submissions Table:
+
+![image](https://i.postimg.cc/brHYt09x/imagem-2025-07-16-195523677.png)
+
+Sample Output
+
+90411 Joe
+Explanation
+
+Hacker 86870 got a score of 30 for challenge 71055 with a difficulty level of 2, so 86870 earned a full score for this challenge.
+
+Hacker 90411 got a score of 30 for challenge 71055 with a difficulty level of 2, so 90411 earned a full score for this challenge.
+
+Hacker 90411 got a score of 100 for challenge 66730 with a difficulty level of 6, so 90411 earned a full score for this challenge.
+
+Only hacker 90411 managed to earn a full score for more than one challenge, so we print the their hacker_id and name as 2 space-separated values.
+
+ ##### Answer: 
+```
+SELECT s.hacker_id, h.name
+FROM Submissions s
+JOIN Challenges c ON s.challenge_id = c.challenge_id
+JOIN Difficulty d ON c.difficulty_level = d.difficulty_level
+JOIN Hackers h ON s.hacker_id = h.hacker_id
+WHERE s.score = d.score
+GROUP BY s.hacker_id, h.name
+HAVING COUNT(DISTINCT s.challenge_id) > 1
+ORDER BY COUNT(DISTINCT s.challenge_id) DESC, s.hacker_id;
+```
