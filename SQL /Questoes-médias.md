@@ -425,7 +425,21 @@ Hacker 74842 submitted solutions for challenges 19797 and 63132, so the total sc
 
 Hacker 84072 submitted solutions for challenges 49593 and 63132, so the total score = 100 + 0 = 100.
 
-The total scores for hackers 4806, 26071, 80305, and 49438 can be similarly calculated.
+ ##### Answer: 
+```
+SELECT h.hacker_id, h.name, SUM(ms.max_score) AS total_score
+FROM Hackers h
+JOIN (
+    SELECT hacker_id, challenge_id, MAX(score) AS max_score
+    FROM Submissions
+    GROUP BY hacker_id, challenge_id
+) AS ms
+ON h.hacker_id = ms.hacker_id
+GROUP BY h.hacker_id, h.name
+HAVING total_score > 0
+ORDER BY total_score DESC, h.hacker_id;
 
+The total scores for hackers 4806, 26071, 80305, and 49438 can be similarly calculated.
+```
 
 
