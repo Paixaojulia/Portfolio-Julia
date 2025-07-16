@@ -254,3 +254,178 @@ GROUP BY s.hacker_id, h.name
 HAVING COUNT(DISTINCT s.challenge_id) > 1
 ORDER BY COUNT(DISTINCT s.challenge_id) DESC, s.hacker_id;
 ```
+## 8 - Symmetric Pairs
+
+You are given a table, Functions, containing two columns: X and Y.
+
+![image](https://i.postimg.cc/jdLkCqq5/imagem-2025-07-16-200220230.png)
+
+Two pairs (X1, Y1) and (X2, Y2) are said to be symmetric pairs if X1 = Y2 and X2 = Y1.
+
+Write a query to output all such symmetric pairs in ascending order by the value of X. List the rows such that X1 ≤ Y1.
+Sample Input
+
+![image](https://i.postimg.cc/YSk3Nt7Q/imagem-2025-07-16-200326433.png)
+
+Sample Output
+
+20 20
+20 21
+22 23
+
+ ##### Answer: 
+```
+SELECT DISTINCT
+    LEAST(f1.X, f1.Y) AS X,
+    GREATEST(f1.X, f1.Y) AS Y
+FROM Functions f1
+JOIN Functions f2
+  ON f1.X = f2.Y AND f1.Y = f2.X
+WHERE f1.X != f1.Y OR (f1.X = f1.Y AND EXISTS (
+    SELECT 1 FROM Functions f3
+    WHERE f3.X = f1.X AND f3.Y = f1.Y HAVING COUNT(*) > 1
+))
+ORDER BY X;
+```
+
+## 9 - New Companies
+
+Amber's conglomerate corporation just acquired some new companies. Each of the companies follows this hierarchy:
+
+![image](https://i.postimg.cc/D0dswXWD/imagem-2025-07-16-200750037.png)
+
+Given the table schemas below, write a query to print the company_code, founder name, total number of lead managers, total number of senior managers, total number of managers, and total number of employees. Order your output by ascending company_code.
+
+Note:
+
+The tables may contain duplicate records.
+The company_code is string, so the sorting should not be numeric. For example, if the company_codes are C_1, C_2, and C_10, then the ascending company_codes will be C_1, C_10, and C_2.
+Input Format
+
+The following tables contain company data:
+
+Company: The company_code is the code of the company and founder is the founder of the company.
+
+![image](https://i.postimg.cc/T3mczp0z/imagem-2025-07-16-201931085.png)
+
+Lead_Manager: The lead_manager_code is the code of the lead manager, and the company_code is the code of the working company.
+
+![image](https://i.postimg.cc/dtCN8qpV/imagem-2025-07-16-202024474.png)
+
+Senior_Manager: The senior_manager_code is the code of the senior manager, the lead_manager_code is the code of its lead manager, and the company_code is the code of the working company.
+
+![image](https://i.postimg.cc/G2BxdK1m/imagem-2025-07-16-202052327.png)
+
+Manager: The manager_code is the code of the manager, the senior_manager_code is the code of its senior manager, the lead_manager_code is the code of its lead manager, and the company_code is the code of the working company.
+
+![image](https://i.postimg.cc/66cpBXYT/imagem-2025-07-16-202128263.png)
+
+Employee: The employee_code is the code of the employee, the manager_code is the code of its manager, the senior_manager_code is the code of its senior manager, the lead_manager_code is the code of its lead manager, and the company_code is the code of the working company.
+
+![image](https://i.postimg.cc/906xvSR2/imagem-2025-07-16-202203516.png)
+
+Sample Input
+
+Company Table:
+
+![image](https://i.postimg.cc/ZKkzkDh0/imagem-2025-07-16-202234842.png)
+
+Lead_Manager Table:
+
+![image](https://i.postimg.cc/Dyfdz7hN/imagem-2025-07-16-202320397.png)
+
+Senior_Manager Table:
+
+![image](https://i.postimg.cc/HkXxD7K1/imagem-2025-07-16-202626241.png)
+
+Manager Table:
+
+![image](https://i.postimg.cc/T3VRHvLR/imagem-2025-07-16-202707008.png)
+
+Employee Table:
+
+![image](https://i.postimg.cc/sgsXz2RB/imagem-2025-07-16-202748544.png)
+
+Sample Output
+
+C1 Monika 1 2 1 2
+C2 Samantha 1 1 2 2
+Explanation
+
+In company C1, the only lead manager is LM1. There are two senior managers, SM1 and SM2, under LM1. There is one manager, M1, under senior manager SM1. There are two employees, E1 and E2, under manager M1.
+
+In company C2, the only lead manager is LM2. There is one senior manager, SM3, under LM2. There are two managers, M2 and M3, under senior manager SM3. There is one employee, E3, under manager M2, and another employee, E4, under manager, M3.
+
+
+ ##### Answer: 
+```
+SELECT 
+    c.company_code,
+    c.founder,
+    COUNT(DISTINCT lm.lead_manager_code),
+    COUNT(DISTINCT sm.senior_manager_code),
+    COUNT(DISTINCT m.manager_code),
+    COUNT(DISTINCT e.employee_code)
+FROM Company c
+LEFT JOIN Lead_Manager lm 
+    ON c.company_code = lm.company_code
+LEFT JOIN Senior_Manager sm 
+    ON c.company_code = sm.company_code
+LEFT JOIN Manager m 
+    ON c.company_code = m.company_code
+LEFT JOIN Employee e 
+    ON c.company_code = e.company_code
+GROUP BY c.company_code, c.founder
+ORDER BY c.company_code;
+```
+
+![image](
+## 10 - Contest Leaderboard
+
+You did such a great job helping Julia with her last coding contest challenge that she wants you to work on this one, too!
+
+The total score of a hacker is the sum of their maximum scores for all of the challenges. Write a query to print the hacker_id, name, and total score of the hackers ordered by the descending score. If more than one hacker achieved the same total score, then sort the result by ascending hacker_id. Exclude all hackers with a total score of  from your result.
+
+Input Format
+
+The following tables contain contest data:
+
+Hackers: The hacker_id is the id of the hacker, and name is the name of the hacker.
+
+![image](https://i.postimg.cc/nLT9gDjc/imagem-2025-07-16-203616626.png)
+
+Submissions: The submission_id is the id of the submission, hacker_id is the id of the hacker who made the submission, challenge_id is the id of the challenge for which the submission belongs to, and score is the score of the submission.
+
+![image](https://i.postimg.cc/RhJ3WpPN/imagem-2025-07-16-203658631.png)
+
+Sample Input
+
+Hackers Table:
+
+![image](https://i.postimg.cc/Njc4wRM1/imagem-2025-07-16-203725762.png)
+
+Submissions Table:
+
+![image](https://i.postimg.cc/rpyNDc5s/imagem-2025-07-16-203759586.png)
+
+Sample Output
+
+4071 Rose 191
+74842 Lisa 174
+84072 Bonnie 100
+4806 Angela 89
+26071 Frank 85
+80305 Kimberly 67
+49438 Patrick 43
+Explanation
+
+Hacker 4071 submitted solutions for challenges 19797 and 49593, so the total score = 95 + max(43,96) = 191.
+
+Hacker 74842 submitted solutions for challenges 19797 and 63132, so the total score = max (98,5) + 76 = 174.
+
+Hacker 84072 submitted solutions for challenges 49593 and 63132, so the total score = 100 + 0 = 100.
+
+The total scores for hackers 4806, 26071, 80305, and 49438 can be similarly calculated.
+
+
+
