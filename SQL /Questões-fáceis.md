@@ -788,5 +788,83 @@ WHERE
 ```
 
 
+## 4 - SQL WHERE AND OR Practice Exercise (SQL Interview Question)
+Let's practice using AND along with WHERE to filter Amazon reviews based on these two conditions:
+
+the start count is greater than 2, and less than or equal to 4
+the review must come from either user 123, 265, or 362
+Pro Tip: Try coding up, and executing, each filtering condition, one at a time. It's too easy to try to code this all up in one go, and mess something up!
+
+reviews      Table:
+Column Name	 Type
+review_id	 integer
+user_id	    integer
+submit_date	 datetime
+product_id	 integer
+stars	integer  (1-5)
+
+reviews Sample Input:
+review_id	user_id	submit_date	product_id	stars
+6171	123	06/08/2022 00:00:00	50001	4
+7802	265	06/10/2022 00:00:00	69852	4
+5293	362	06/18/2022 00:00:00	50001	3
+6352	192	07/26/2022 00:00:00	69852	3
+4517	981	07/05/2022 00:00:00	69852	2
+
+Sample Output:
+review_id	user_id	submit_date	product_id	stars
+6171	123	06/08/2022  00:00:00	 50001	    4
+
+##### Answer:
+```
+SELECT * FROM reviews
+WHERE stars > 2
+AND stars <= 4
+AND (user_id = 123 OR user_id = 265 OR user_id = 362);
+```
+
+## 5 - SQL BETWEEN Practice Exercise (SQL Interview Question)
+
+Imagine you are a Data Analyst working at CVS Pharmacy, and you had access to pharmacy sales data. Use the BETWEEN SQL command to find data on medicines:
+
+which sold between 100,000 units and 105,000 units
+AND were manufactured by either Biogen, AbbVie, or Eli Lilly
+Output the manufacturer name, drug name, and the # of units sold.
+
+Hint: this problem requires not just BETWEEN, but also OR, AND, and WHERE clauses!
+
+If you are struggling, be sure to review the old tutorials!
+
+pharmacy_sales   Table:
+Column Name	     Type
+product_id	     integer
+units_sold       integer
+total_sales	     decimal
+cogs	           decimal
+manufacturer	  varchar
+drug	           varchar
+
+pharmacy_sales Sample Input:
+product_id	units_sold	total_sales	cogs	      manufacturer	drug
+9	         37410	      293452.54	208876.01	Eli Lilly	   Zyprexa
+34       	94698	      600997.19	521182.16	AstraZeneca	   Surmontil
+61	         77023	      500101.61	419174.97	Biogen	      Varicose Relief
+136	      144814	   1084258	   1006447.73	Biogen	      Burkhart
+...	      ...	      ...	      ...	      ...	         ....
+
+pharmacy_sales Example Output:
+manufacturer	 drug	                                   units_sold
+AbbVie	       Lidocaine Hydrochloride and Epinephri	  101102
+AbbVie	       Hydralazine Hydrochloride	              104368
+Biogen	       QUETIAPINE FUMARATE 	                 103246
+Eli Lilly	    Androgel	                             102027
+
+##### Answer:
+```
+SELECT manufacturer, drug, units_sold
+FROM pharmacy_sales
+WHERE (manufacturer = 'Biogen' OR manufacturer = 'AbbVie' OR manufacturer = 'Eli Lilly')
+AND units_sold BETWEEN 100000 AND 105000;
+```
 
 
